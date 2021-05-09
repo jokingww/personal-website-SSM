@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wan.dao.IArticleDao">
+    <resultMap id="articleResultMap" type="com.wan.entity.Article">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="subtitle" property="subtitle" jdbcType="VARCHAR"/>
+        <result column="content2" property="content2" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="tb">article</sql>
+
+    <sql id="Column_List">
+        id, title, content, subtitle, content2, date
+    </sql>
+
+    <select id="getArticleById" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            id=#{value}
+        </where>
+        limit 1
+    </select>
+
+    <select id="getArticleList" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        ORDER BY date DESC
+    </select>
+
+    <select id="getArticleListWithLimit" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        ORDER BY date DESC
+        limit #{value}
+    </select>
+
+    <select id="searchByContent" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            <if test="value != null">
+                content LIKE concat(concat('%',#{value, jdbcType=VARCHAR}),'%') AND
+            </if>
+            1=1
+        </where>
+    </select>
+
+    <select id="getAfterArticle" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            id > #{id}
+        </where>
+        ORDER BY id
+        limit 1
+    </select>
+
+    <select id="getPreArticle" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            id &lt; #{id}
+        </where>
+        ORDER BY id DESC
+        limit 1
+    </select>
+
+    <select id="getFirstArticle" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        ORDER BY id
+        limit 1
+    </select>
+
+    <select id="getLastArticle" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        ORDER BY id DESC
+        limit 1
+    </select>
+
+    <insert id="addArticle" parameterType="com.wan.entity.Article" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into
+        <include refid="tb"/>
+        (title, content, subtitle, content2, date)
+        values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{subtitle,jdbcType=INTEGER},
+        #{content2,jdbcType=INTEGER}, #{date,jdbcType=INTEGER})
+    </insert>
+
+    <delete id="deleteArticleById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tb"/>
+        where id = #{value ,jdbcType=INTEGER}
+    </delete>
+
+    <update id="updateArticle" parameterType="com.wan.entity.Article">
+        update
+        <include refid="tb"/>
+        <set>
+            <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>
+            <if test="content != null">content = #{content,jdbcType=VARCHAR},</if>
+            <if test="subtitle != null">subtitle = #{subtitle,jdbcType=VARCHAR},</if>
+            <if test="content2 != null">content2 = #{content2,jdbcType=VARCHAR},</if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="searchByTitle" resultMap="articleResultMap" resultType="com.wan.entity.Article">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            <if test="value != null">
+                title LIKE concat(concat('%',#{value, jdbcType=VARCHAR}),'%') AND
+            </if>
+            1=1
+        </where>
+    </select>
+</mapper>

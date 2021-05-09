@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wan.dao.ICommentDao">
+    <resultMap id="commentResultMap" type="com.wan.entity.Comment">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="tb">comment</sql>
+
+    <sql id="Column_List">
+        id, name, sex, content, date, email
+    </sql>
+
+    <select id="getCommentAll" resultMap="commentResultMap" resultType="com.wan.entity.Comment">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        ORDER BY id DESC
+    </select>
+
+    <insert id="addComment" parameterType="com.wan.entity.Comment" useGeneratedKeys="true">
+        insert into
+        <include refid="tb"/>
+        (name, sex, content, date, email)
+        values (#{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+        #{date,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="searchByNameOrContent" resultMap="commentResultMap" resultType="com.wan.entity.Comment">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            <if test="value != null">
+                content LIKE concat(concat('%',#{value, jdbcType=VARCHAR}),'%') OR
+                name LIKE concat(concat('%',#{value, jdbcType=VARCHAR}),'%') AND
+            </if>
+            1=1
+        </where>
+    </select>
+
+    <delete id="deleteCommentById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tb"/>
+        where id = #{value ,jdbcType=INTEGER}
+    </delete>
+
+    <select id="searchByName" resultMap="commentResultMap" resultType="com.wan.entity.Comment">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            <if test="value != null">
+                name LIKE concat(concat('%',#{value, jdbcType=VARCHAR}),'%') AND
+            </if>
+            1=1
+        </where>
+    </select>
+
+    <select id="searchByContent" resultMap="commentResultMap" resultType="com.wan.entity.Comment">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            <if test="value != null">
+                content LIKE concat(concat('%',#{value, jdbcType=VARCHAR}),'%') AND
+            </if>
+            1=1
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-4.3.xsd
+         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+    <!--扫描所有handler(控制器)-->
+    <context:component-scan base-package="com.wan"/>
+
+    <!-- 一个配置节解决映射器和适配器的配置注解配置 注解扫描 -->
+    <mvc:annotation-driven></mvc:annotation-driven>
+
+    <!--
+    <bean id="loggerBefore" class="com.wan.aop.LoggerBefore"/>
+    <bean id="loggerAfterReturning" class="com.wan.aop.LoggerAfterReturning"/>
+    <aop:config>
+        <aop:pointcut id="pointcut" expression="execution(* com.wan.service.IUserService.updatePassword())"/>
+        <aop:advisor advice-ref="loggerBefore" pointcut-ref="pointcut"/>
+        <aop:advisor advice-ref="loggerAfterReturning" pointcut-ref="pointcut"/>
+    </aop:config>
+    -->
+
+    <!-- 静态资源映射 -->
+    <mvc:resources mapping="/css/**" location="/resources/assets/css/"></mvc:resources>
+    <mvc:resources mapping="/js/**" location="/resources/assets/js/"></mvc:resources>
+    <mvc:resources mapping="/img/**" location="/resources/assets/img/"></mvc:resources>
+    <mvc:resources mapping="/fonts/**" location="/resources/assets/css/fonts/"></mvc:resources>
+
+    <!--配置视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--重定向时,是否加上上下文路径-->
+        <property name="redirectContextRelative" value="true"/>
+        <!--配置解析前后缀-->
+        <property name="prefix" value="/WEB-INF/view/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/admin/**"/>
+            <mvc:exclude-mapping path="/admin/tologin.do"/>
+            <bean class="com.wan.intercepter.IntercepterAdmin"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>

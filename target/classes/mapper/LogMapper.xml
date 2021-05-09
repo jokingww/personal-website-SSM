@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wan.dao.ILogDao">
+    <resultMap id="logResultMap" type="com.wan.entity.Log">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="type" property="type" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="tb">log</sql>
+
+    <sql id="Column_List">
+        id, type, content, date
+    </sql>
+
+    <select id="getLogList" resultMap="logResultMap" resultType="com.wan.entity.Log">
+        SELECT
+        <include refid="Column_List"/>
+        FROM
+        <include refid="tb"/>
+        ORDER BY date DESC
+    </select>
+
+    <insert id="addLog" parameterType="com.wan.entity.Log" useGeneratedKeys="true">
+        insert into
+        <include refid="tb"/>
+        (type, content, date)
+        values (#{type,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR},
+        #{date,jdbcType=VARCHAR})
+    </insert>
+</mapper>
